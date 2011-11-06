@@ -300,12 +300,16 @@ void term_set_color(TERM_WINDOW *window, int col)
 	int fg = col & 0x0f;
 	int bg = (col & 0xf0) >> 4;
 
+	if (!term_use_colors && (col & 0xf0) != 0)
+		col |= ATTR_REVERSE;
+
         set_normal = ((col & ATTR_RESETFG) && last_fg != -1) ||
 		((col & ATTR_RESETBG) && last_bg != -1);
 	if (((last_attrs & ATTR_BOLD) && (col & ATTR_BOLD) == 0) ||
-	    ((last_attrs & ATTR_BLINK) && (col & ATTR_BLINK) == 0)) {
-		/* we'll need to get rid of bold/blink - this can only be
-		   done with setting the default color */
+	    ((last_attrs & ATTR_BLINK) && (col & ATTR_BLINK) == 0) ||
+	    ((last_attrs & ATTR_REVERSE) && (col & ATTR_REVERSE) == 0)) {
+		/* we'll need to get rid of bold/blink/reverse - this can only
+		   be done with setting the default color */
 		set_normal = TRUE;
 	}
 
@@ -314,16 +318,6 @@ void term_set_color(TERM_WINDOW *window, int col)
                 last_attrs = 0;
 		terminfo_set_normal();
 	}
-
-	if (!term_use_colors && (col & 0xf0) != 0)
-		col |= ATTR_REVERSE;
-
-	/* reversed text (use standout) */
-	if (col & ATTR_REVERSE) {
-		if ((last_attrs & ATTR_REVERSE) == 0)
-			terminfo_set_standout(TRUE);
-	} else if (last_attrs & ATTR_REVERSE)
-		terminfo_set_standout(FALSE);
 
 	/* set foreground color */
 	if (fg != last_fg &&
@@ -348,6 +342,10 @@ void term_set_color(TERM_WINDOW *window, int col)
 		}
 	}
 
+	/* reversed text */
+	if (col & ATTR_REVERSE)
+		terminfo_set_reverse();
+
 	/* bold */
 	if (col & 0x08 && window->term->TI_colors == 8)
 		col |= ATTR_BOLD;
@@ -360,6 +358,13 @@ void term_set_color(TERM_WINDOW *window, int col)
 			terminfo_set_uline(TRUE);
 	} else if (last_attrs & ATTR_UNDERLINE)
 		terminfo_set_uline(FALSE);
+
+	/* italic */
+	if (col & ATTR_ITALIC) {
+		if ((last_attrs & ATTR_ITALIC) == 0)
+			terminfo_set_italic(TRUE);
+	} else if (last_attrs & ATTR_ITALIC)
+		terminfo_set_italic(FALSE);
 
         last_attrs = col & ~0xff;
 }

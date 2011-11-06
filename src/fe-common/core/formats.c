@@ -129,6 +129,11 @@ int format_expand_styles(GString *out, const char **format, int *flags)
 		g_string_append_c(out, 4);
 		g_string_append_c(out, FORMAT_STYLE_REVERSE);
 		break;
+	case 'I':
+		/* italic */
+		g_string_append_c(out, 4);
+		g_string_append_c(out, FORMAT_STYLE_ITALIC);
+		break;
 	case ':':
 		/* Newline */
 		g_string_append_c(out, '\n');
@@ -755,6 +760,10 @@ static const char *get_ansi_color(THEME_REC *theme, const char *str,
 			/* hilight */
 			flags |= GUI_PRINT_FLAG_BOLD;
 			break;
+		case 3:
+			/* italic */
+			flags |= GUI_PRINT_FLAG_ITALIC;
+			break;
 		case 5:
 			/* blink */
 			flags |= GUI_PRINT_FLAG_BLINK;
@@ -832,7 +841,7 @@ static void get_mirc_color(const char **str, int *fg_ret, int *bg_ret)
 
 #define IS_COLOR_CODE(c) \
 	((c) == 2 || (c) == 3 || (c) == 4 || (c) == 6 || (c) == 7 || \
-	(c) == 15 || (c) == 22 || (c) == 27 || (c) == 31)
+	 (c) == 15 || (c) == 22 || (c) == 27 || (c) == 29 || (c) == 31)
 
 /* Return how many characters in `str' must be skipped before `len'
    characters of text is skipped. */
@@ -1004,6 +1013,9 @@ void format_send_to_gui(TEXT_DEST_REC *dest, const char *text)
 			case FORMAT_STYLE_BOLD:
 				flags ^= GUI_PRINT_FLAG_BOLD;
 				break;
+			case FORMAT_STYLE_ITALIC:
+				flags ^= GUI_PRINT_FLAG_ITALIC;
+				break;
 			case FORMAT_STYLE_REVERSE:
 				flags ^= GUI_PRINT_FLAG_REVERSE;
 				break;
@@ -1049,6 +1061,11 @@ void format_send_to_gui(TEXT_DEST_REC *dest, const char *text)
 			/* reverse */
 			if (!hide_text_style)
 				flags ^= GUI_PRINT_FLAG_REVERSE;
+			break;
+		case 29:
+			/* italic */
+			if (!hide_text_style)
+				flags ^= GUI_PRINT_FLAG_ITALIC;
 			break;
 		case 31:
 			/* underline */

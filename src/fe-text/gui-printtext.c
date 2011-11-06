@@ -158,6 +158,7 @@ static void get_colors(int flags, int *fg, int *bg, int *attr)
 	if (flags & GUI_PRINT_FLAG_BOLD) *attr |= ATTR_BOLD;
 	if (flags & GUI_PRINT_FLAG_UNDERLINE) *attr |= ATTR_UNDERLINE;
 	if (flags & GUI_PRINT_FLAG_BLINK) *attr |= ATTR_BLINK;
+	if (flags & GUI_PRINT_FLAG_ITALIC) *attr |= ATTR_ITALIC;
 }
 
 static void view_add_eol(TEXT_BUFFER_VIEW_REC *view, LINE_REC **line)

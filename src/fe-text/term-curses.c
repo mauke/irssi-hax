@@ -290,6 +290,7 @@ static int get_attr(int color)
 	}
 
 	if ((color & 0x08) || (color & ATTR_BOLD)) attr |= A_BOLD;
+	if (color & ATTR_ITALIC) attr |= A_REVERSE;
 	if (color & ATTR_BLINK) attr |= A_BLINK;
 
 	if (color & ATTR_UNDERLINE) attr |= A_UNDERLINE;
