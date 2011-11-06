@@ -973,7 +973,7 @@ void gui_readline_init(void)
 
         /* meta */
 	key_bind("key", NULL, "^[", "meta", (SIGNAL_FUNC) key_combo);
-	key_bind("key", NULL, "meta-[", "meta2", (SIGNAL_FUNC) key_combo);
+	//key_bind("key", NULL, "meta-[", "meta2", (SIGNAL_FUNC) key_combo);
 	key_bind("key", NULL, "meta-O", "meta2", (SIGNAL_FUNC) key_combo);
 	key_bind("key", NULL, "meta-[O", "meta2", (SIGNAL_FUNC) key_combo);
 
