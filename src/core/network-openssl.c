@@ -150,6 +150,9 @@ static gboolean irssi_ssl_verify_hostname(X509 *cert, const char *hostname)
 	char *cert_subject_cn;
 	const GENERAL_NAME *gn;
 	STACK_OF(GENERAL_NAME) * gens;
+	GString *alt_names;
+
+	alt_names = g_string_new("");
 
 	/* Verify the dNSName(s) in the peer certificate against the hostname. */
 	gens = X509_get_ext_d2i(cert, NID_subject_alt_name, 0, 0);
@@ -166,6 +169,7 @@ static gboolean irssi_ssl_verify_hostname(X509 *cert, const char *hostname)
 			has_dns_name = TRUE;
 			cert_dns_name = tls_dns_name(gn);
 			if (cert_dns_name && *cert_dns_name) {
+				g_string_append_printf(alt_names, " '%s'", cert_dns_name);
 				matched = match_hostname(cert_dns_name, hostname);
 			}
     	}
@@ -177,10 +181,12 @@ static gboolean irssi_ssl_verify_hostname(X509 *cert, const char *hostname)
 	if (has_dns_name) {
 		if (! matched) {
 			/* The CommonName in the issuer DN is obsolete when SubjectAltName is available. */
-			g_warning("None of the Subject Alt Names in the certificate match hostname '%s'", hostname);
+			g_warning("None of the Subject Alt Names%s in the certificate match hostname '%s'", alt_names->str, hostname);
 		}
+		g_string_free(alt_names, TRUE);
 		return matched;
 	} else { /* No subjectAltNames, look at CommonName */
+		g_string_free(alt_names, TRUE);
 		cert_subject_cn = tls_text_name(X509_get_subject_name(cert), NID_commonName);
 	    if (cert_subject_cn && *cert_subject_cn) {
 	    	matched = match_hostname(cert_subject_cn, hostname);
