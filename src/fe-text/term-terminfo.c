@@ -522,7 +522,7 @@ void term_stop(void)
 
 static int input_utf8(const unsigned char *buffer, int size, unichar *result)
 {
-	unichar c = g_utf8_get_char_validated(buffer, size);
+	unichar c = g_utf8_get_char_validated((const gchar *)buffer, size);
 
 	switch (c) {
 	case (unichar)-1:

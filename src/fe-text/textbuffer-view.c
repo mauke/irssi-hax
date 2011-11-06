@@ -148,14 +148,14 @@ static void update_cmd_color(unsigned char cmd, int *color)
 
 static inline unichar read_unichar(const unsigned char *data, const unsigned char **next, int *width)
 {
-	unichar chr = g_utf8_get_char_validated(data, -1);
+	unichar chr = g_utf8_get_char_validated((const gchar *)data, -1);
 
 	if (chr & 0x80000000) {
 		chr = 0xfffd;
 		*next = data + 1;
 		*width = 1;
 	} else {
-		*next = g_utf8_next_char(data);
+		*next = (const unsigned char *)g_utf8_next_char(data);
 		*width = unichar_isprint(chr) ? mk_wcwidth(chr) : 1;
 	}
 	return chr;

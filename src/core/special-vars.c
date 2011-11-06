@@ -373,6 +373,8 @@ char *parse_special(char **cmd, SERVER_REC *server, void *item,
 		}
 		break;
 	default:
+		align_pad = '\0';
+		align = align_flags = 0;
 		command = 0;
 		(*cmd)--;
 	}
