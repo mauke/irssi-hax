@@ -1,5 +1,5 @@
 
-CONNECT %|[-4 | -6] [-ssl] [-ssl_cert <cert>] [-ssl_pkey <pkey>] [-ssl_verify] [-ssl_cafile <cafile>] [-ssl_capath <capath>] [-noproxy] [-network <network>] [-host <hostname>] [-rawlog <file>] <address>|<chatnet> [<port> [<password> [<nick>]]]
+CONNECT %|[-4 | -6] [-ssl] [-ssl_cert <cert>] [-ssl_pkey <pkey>] [-ssl_verify] [-ssl_cafile <cafile>] [-ssl_capath <capath>] [-noproxy] [-network <network>] [-host <hostname>] [-rawlog <file>] [-nick <nick>] [-username <username>] [-realname <realname>] <address>|<chatnet> [<port> [<password> [<nick>]]]
 
      -4, -6: specify explicitly whether to use IPv4 or IPv6 address
      -ssl: use SSL when connecting
@@ -13,6 +13,9 @@ CONNECT %|[-4 | -6] [-ssl] [-ssl_cert <cert>] [-ssl_pkey <pkey>] [-ssl_verify] [
      -host: the host
      -!: don't autojoin channels
      -rawlog: immediately open rawlog after connected
+     -nick: your nick
+     -username: your username (ident)
+     -realname: your real name
 
 This command makes irssi to connect to specified server. Current connections are kept and a new one is created.
 

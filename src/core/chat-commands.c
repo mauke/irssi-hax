@@ -116,6 +116,12 @@ static SERVER_CONNECT_REC *get_server_connect(const char *data, int *plus_addr,
 	if (g_hash_table_lookup(optlist, "noproxy") != NULL)
                 g_free_and_null(conn->proxy);
 
+	if ((tmp = g_hash_table_lookup(optlist, "nick")) != NULL)
+		conn->nick = g_strdup(tmp);
+	if ((tmp = g_hash_table_lookup(optlist, "username")) != NULL)
+		conn->username = g_strdup(tmp);
+	if ((tmp = g_hash_table_lookup(optlist, "realname")) != NULL)
+		conn->realname = g_strdup(tmp);
 
 	*rawlog_file = g_strdup(g_hash_table_lookup(optlist, "rawlog"));
 
@@ -453,7 +459,7 @@ void chat_commands_init(void)
 	signal_add("default command server", (SIGNAL_FUNC) sig_default_command_server);
 	signal_add("server sendmsg", (SIGNAL_FUNC) sig_server_sendmsg);
 
-	command_set_options("connect", "4 6 !! -network ssl +ssl_cert +ssl_pkey ssl_verify +ssl_cafile +ssl_capath +host noproxy -rawlog");
+	command_set_options("connect", "4 6 !! -network ssl +ssl_cert +ssl_pkey ssl_verify +ssl_cafile +ssl_capath +host noproxy -rawlog +nick +username +realname");
 	command_set_options("msg", "channel nick");
 }
 
