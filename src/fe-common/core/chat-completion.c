@@ -39,6 +39,7 @@
 #include "window-items.h"
 
 static int keep_privates_count, keep_publics_count;
+static int completion_ignore_joins;
 static int completion_lowercase;
 static const char *completion_char, *cmdchars;
 static GSList *global_lastmsgs;
@@ -166,6 +167,9 @@ static void sig_message_join(SERVER_REC *server, const char *channel,
 			     const char *nick, const char *address)
 {
 	CHANNEL_REC *chanrec;
+
+	if (completion_ignore_joins)
+		return;
 
 	chanrec = channel_find(server, channel);
 	if (chanrec != NULL)
@@ -1125,6 +1129,7 @@ static void read_settings(void)
 {
 	keep_privates_count = settings_get_int("completion_keep_privates");
 	keep_publics_count = settings_get_int("completion_keep_publics");
+	completion_ignore_joins = settings_get_bool("completion_ignore_joins");
 	completion_lowercase = settings_get_bool("completion_nicks_lowercase");
 	completion_char = settings_get_str("completion_char");
 	cmdchars = settings_get_str("cmdchars");
@@ -1143,6 +1148,7 @@ void chat_completion_init(void)
 	settings_add_bool("completion", "completion_auto", FALSE);
 	settings_add_int("completion", "completion_keep_publics", 50);
 	settings_add_int("completion", "completion_keep_privates", 10);
+	settings_add_bool("completion", "completion_ignore_joins", FALSE);
 	settings_add_bool("completion", "completion_nicks_lowercase", FALSE);
 	settings_add_bool("completion", "completion_strict", FALSE);
 
