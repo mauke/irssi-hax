@@ -714,6 +714,11 @@ static void knockout_destroy(IRC_SERVER_REC *server, KNOCKOUT_REC *rec)
 	g_free(rec);
 }
 
+static void sig_knockout_ban_remove(IRC_CHANNEL_REC *channel, const char *ban)
+{
+	ban_remove(channel, ban);
+}
+
 /* timeout function: knockout */
 static void knockout_timeout_server(IRC_SERVER_REC *server)
 {
@@ -732,7 +737,7 @@ static void knockout_timeout_server(IRC_SERVER_REC *server)
 		next = tmp->next;
 		if (rec->unban_time <= now) {
 			/* timeout, unban. */
-			ban_remove(rec->channel, rec->ban);
+			signal_emit("knockout ban remove", 2, rec->channel, rec->ban);
 			knockout_destroy(server, rec);
 		}
 	}
@@ -1034,6 +1039,7 @@ void irc_commands_init(void)
 	command_bind_irc("server purge", NULL, (SIGNAL_FUNC) cmd_server_purge);
 
 	signal_add("channel destroyed", (SIGNAL_FUNC) sig_channel_destroyed);
+	signal_add("knockout ban remove", (SIGNAL_FUNC) sig_knockout_ban_remove);
 	signal_add("server disconnected", (SIGNAL_FUNC) sig_server_disconnected);
 	signal_add("whois try whowas", (SIGNAL_FUNC) sig_whois_try_whowas);
 	signal_add("whois event", (SIGNAL_FUNC) event_whois);
@@ -1104,6 +1110,7 @@ void irc_commands_deinit(void)
 	command_unbind("server purge", (SIGNAL_FUNC) cmd_server_purge);
 
 	signal_remove("channel destroyed", (SIGNAL_FUNC) sig_channel_destroyed);
+	signal_remove("knockout ban remove", (SIGNAL_FUNC) sig_knockout_ban_remove);
 	signal_remove("server disconnected", (SIGNAL_FUNC) sig_server_disconnected);
 	signal_remove("whois try whowas", (SIGNAL_FUNC) sig_whois_try_whowas);
 	signal_remove("whois event", (SIGNAL_FUNC) event_whois);

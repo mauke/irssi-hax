@@ -117,6 +117,9 @@ ctcp.c:
  "default ctcp reply", SERVER_REC, char *args, char *nick, char *addr, char *target
  "ctcp action", SERVER_REC, char *args, char *nick, char *addr, char *target
 
+irc-commands.c:
+ "knockout ban remove", CHANNEL_REC, char *ban
+
 irc-log.c:
  "awaylog show", LOG_REC, int away_msgs, int filepos
 
