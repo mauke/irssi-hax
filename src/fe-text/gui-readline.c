@@ -436,7 +436,7 @@ static void key_send_line(void)
 	history = command_history_current(active_win);
 
 	if (redir == NULL) {
-		signal_emit("send command", 3, str,
+		signal_emit("gui line entered", 3, str,
 			    active_win->active_server,
 			    active_win->active);
 	} else {
@@ -924,6 +924,11 @@ static void sig_gui_entry_redirect(SIGNAL_FUNC func, const char *entry,
 	gui_entry_set_prompt(active_entry, entry);
 }
 
+static void sig_gui_line_entered(const char *line, SERVER_REC *server, void *item)
+{
+	signal_emit("send command", 3, line, server, item);
+}
+
 static void setup_changed(void)
 {
 	paste_detect_time = settings_get_time("paste_detect_time");
@@ -1106,6 +1111,7 @@ void gui_readline_init(void)
 	signal_add("window changed automatic", (SIGNAL_FUNC) sig_window_auto_changed);
 	signal_add("gui entry redirect", (SIGNAL_FUNC) sig_gui_entry_redirect);
 	signal_add("gui key pressed", (SIGNAL_FUNC) sig_gui_key_pressed);
+	signal_add("gui line entered", (SIGNAL_FUNC) sig_gui_line_entered);
 	signal_add("setup changed", (SIGNAL_FUNC) setup_changed);
 }
 
@@ -1178,5 +1184,6 @@ void gui_readline_deinit(void)
 	signal_remove("window changed automatic", (SIGNAL_FUNC) sig_window_auto_changed);
 	signal_remove("gui entry redirect", (SIGNAL_FUNC) sig_gui_entry_redirect);
 	signal_remove("gui key pressed", (SIGNAL_FUNC) sig_gui_key_pressed);
+	signal_remove("gui line entered", (SIGNAL_FUNC) sig_gui_line_entered);
 	signal_remove("setup changed", (SIGNAL_FUNC) setup_changed);
 }

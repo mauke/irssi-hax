@@ -325,6 +325,7 @@ Text FE
 
 gui-readline.c:
  "gui key pressed", int key
+ "gui line entered", char *command, SERVER_REC, WI_ITEM_REC
 
 gui-printtext.c:
  "beep"
