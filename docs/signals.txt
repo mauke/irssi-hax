@@ -304,6 +304,7 @@ fe-events.c:
 
 fe-irc-messages.c:
  "message irc op_public", SERVER_REC, char *msg, char *nick, char *address, char *target
+ "message irc voice_public", SERVER_REC, char *msg, char *nick, char *address, char *target
  "message irc own_wall", SERVER_REC, char *msg, char *target
  "message irc own_action", SERVER_REC, char *msg, char *target
  "message irc action", SERVER_REC, char *msg, char *nick, char *address, char *target
