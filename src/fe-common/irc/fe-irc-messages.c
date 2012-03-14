@@ -125,6 +125,25 @@ static void sig_message_irc_voice_public(SERVER_REC *server, const char *msg,
         g_free(vtarget);
 }
 
+/* received msg to all halfops in channel */
+static void sig_message_irc_halfop_public(SERVER_REC *server, const char *msg,
+					  const char *nick, const char *address,
+					  const char *target)
+{
+	char *nickmode, *hoptarget;
+
+	nickmode = channel_get_nickmode(channel_find(server, target),
+					nick);
+
+        hoptarget = g_strconcat("%", target, NULL);
+	printformat_module("fe-common/core", server, target,
+			   MSGLEVEL_PUBLIC,
+			   TXT_PUBMSG_CHANNEL,
+			   nick, hoptarget, msg, nickmode);
+	g_free(nickmode);
+        g_free(hoptarget);
+}
+
 static void sig_message_own_wall(SERVER_REC *server, const char *msg,
 				 const char *target)
 {
@@ -287,6 +306,7 @@ void fe_irc_messages_init(void)
         signal_add_last("message own_public", (SIGNAL_FUNC) sig_message_own_public);
         signal_add_last("message irc op_public", (SIGNAL_FUNC) sig_message_irc_op_public);
         signal_add_last("message irc voice_public", (SIGNAL_FUNC) sig_message_irc_voice_public);
+        signal_add_last("message irc halfop_public", (SIGNAL_FUNC) sig_message_irc_halfop_public);
         signal_add_last("message irc own_wall", (SIGNAL_FUNC) sig_message_own_wall);
         signal_add_last("message irc own_action", (SIGNAL_FUNC) sig_message_own_action);
         signal_add_last("message irc action", (SIGNAL_FUNC) sig_message_irc_action);
@@ -301,6 +321,7 @@ void fe_irc_messages_deinit(void)
         signal_remove("message own_public", (SIGNAL_FUNC) sig_message_own_public);
         signal_remove("message irc op_public", (SIGNAL_FUNC) sig_message_irc_op_public);
         signal_remove("message irc voice_public", (SIGNAL_FUNC) sig_message_irc_voice_public);
+        signal_remove("message irc halfop_public", (SIGNAL_FUNC) sig_message_irc_halfop_public);
         signal_remove("message irc own_wall", (SIGNAL_FUNC) sig_message_own_wall);
         signal_remove("message irc own_action", (SIGNAL_FUNC) sig_message_own_action);
         signal_remove("message irc action", (SIGNAL_FUNC) sig_message_irc_action);

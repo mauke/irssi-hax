@@ -46,17 +46,29 @@ static void event_privmsg(IRC_SERVER_REC *server, const char *data,
 			  const char *nick, const char *addr)
 {
 	char *params, *target, *msg, *recoded;
+	char *chantypes;
 
 	g_return_if_fail(data != NULL);
 
 	params = event_get_params(data, 2 | PARAM_FLAG_GETREST, &target, &msg);
 	if (nick == NULL) nick = server->real_address;
 	if (addr == NULL) addr = "";
-	if ((*target == '@' || *target == '+') && ischannel(target[1])) {
+	if (
+	    (*target == '@' || *target == '+' || *target == '%') &&
+	    ischannel(target[1]) &&
+	    server &&
+	    server->prefix[(unsigned char)*target] &&
+	    (
+		(chantypes = g_hash_table_lookup(server->isupport, "CHANTYPES")) ||
+		(chantypes = "#&"),
+		!strchr(chantypes, *target)
+	    )
+	) {
 		/* Hybrid 6 feature, send msg to all ops/voiced in channel */
 		recoded = recode_in(SERVER(server), msg, target+1);
-		signal_emit(*target == '@' ?
-			    "message irc op_public" : "message irc voice_public", 5,
+		signal_emit(*target == '%' ? "message irc halfop_public" :
+			    *target == '+' ? "message irc voice_public" :
+			    "message irc op_public", 5,
 			    server, recoded, nick, addr,
 			    get_visible_target(server, target+1));
 	} else {
